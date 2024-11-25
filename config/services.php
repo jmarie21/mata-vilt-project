@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'clickup' => [
+        'api_token' => env('CLICKUP_API_TOKEN'),
+    ],
 
 ];

@@ -90,6 +90,11 @@ const props = defineProps({
                                             <i class="pi pi-calendar-clock"></i> Time Sheets
                                         </Link>
                                     </li>
+                                    <li class="mb-2 py-2 px-4 hover:bg-gray-200 cursor-pointer">
+                                        <Link :href="route('tasks.index')" @click="drawerMenu = false" class="flex items-center gap-2">
+                                            <i class="pi pi-briefcase"></i> Tasks
+                                        </Link>
+                                    </li>
                                 </ul>
                             </div>
                             <div v-else>

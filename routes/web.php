@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClickupTaskController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoginController;
@@ -28,6 +29,10 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
     Route::get('/time_sheets', function() {
         return inertia('TimeSheets');
     })->name('time_sheets');
+    // Route::get('/task', function() {
+    //     return inertia('Tasks');
+    // })->name('task');
+
 
     // Managing users routes
     Route::get('/manage_users', [ManageUserController::class, 'manageUsers'])->name('manage_users');
@@ -47,6 +52,9 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
     //Timesheets routes
     Route::get('/timesheets', [TimeSheetController::class, 'index'])->name('timesheets.index');
     Route::post('/timesheets/upload', [TimeSheetController::class, 'uploadCsv'])->name('timesheets.upload');
+
+    // Clickup tasks routes
+    Route::get('/tasks', [ClickupTaskController::class, 'index'])->name('tasks.index');
     
 });
 
