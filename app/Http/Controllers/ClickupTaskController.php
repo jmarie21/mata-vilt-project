@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\ClickUpService;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use App\Jobs\FetchClickUpTasks;
+use App\Models\ClickUpTask;
 
 class ClickupTaskController extends Controller
 {
@@ -15,20 +17,17 @@ class ClickupTaskController extends Controller
     }
 
     public function index() {
-        try{
-            $listId = '901605068772';
-            $tasks = $this->clickupService->getTasks($listId);
+        $tasks = ClickUpTask::all();
 
-            Log::info('Raw ClickUp response:', ['response' => $tasks]);
-            Log::info('Tasks array:', ['tasks' => $tasks['tasks'] ?? null]);
+        return Inertia::render('Tasks', [
+            'tasks' => $tasks
+        ]);
+    }
 
-            return Inertia::render('Tasks', [
-                'tasks' => $tasks['tasks'] ?? [],
-            ]);
-            
-        } catch (\Exception $e) {
-            Log::error('ClickUp error:', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+    public function fetchTasksDirectly() {
+        $listId = '901605068772';
+        FetchClickupTasks::dispatch($listId);
+        Log::info('Clickup tasks fetch job dispatched directly successfully');
+        return back()->with('success', 'Clickup tasks fetch job dispatched successfully');
     }
 }

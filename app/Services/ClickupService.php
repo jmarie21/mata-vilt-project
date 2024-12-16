@@ -28,7 +28,7 @@ class ClickUpService
         ]);
 
         if ($response->successful()) {
-            return $response->json(); // Returns tasks data
+            return $response->json(); 
         }
 
         throw new \Exception('Failed to fetch tasks: ' . $response->body());

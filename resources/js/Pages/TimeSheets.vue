@@ -1,26 +1,26 @@
 <script setup>
-import MenubarLayout from '../Layouts/MenubarLayout.vue';
-import Divider from 'primevue/divider';
-import Toast from 'primevue/toast';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import { useForm } from '@inertiajs/vue3';
+import MenubarLayout from "../Layouts/MenubarLayout.vue";
+import Divider from "primevue/divider";
+import Toast from "primevue/toast";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import { useForm } from "@inertiajs/vue3";
 import { useToast } from "primevue/usetoast";
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
 const toast = useToast();
 const interval = ref(null);
 
 const form = useForm({
-  file: null,
+    file: null,
 });
 
 const props = defineProps({
     timesheets: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
-}); 
+});
 
 const timesheets = ref([...props.timesheets]);
 
@@ -28,25 +28,25 @@ const formatDate = (value) => {
     if (value) {
         const date = new Date(value);
         const year = date.getFullYear().toString().slice(-2);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
         return `${year}-${day}-${month}`;
     }
-    return '';
+    return "";
 };
 
 const formatDuration = (value) => {
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
         const hours = Math.floor(value / 60);
         const minutes = value % 60;
         return `${hours}h ${minutes}m`;
     }
 
-    return '0h 0m';
+    return "0h 0m";
 };
 
 const fetchTimeSheets = () => {
-    form.get(route('timesheets.index'), {
+    form.get(route("timesheets.index"), {
         onSuccess: (page) => {
             if (page.props.timesheets.length !== timesheets.value.length) {
                 timesheets.value = page.props.timesheets;
@@ -57,31 +57,30 @@ const fetchTimeSheets = () => {
 };
 
 const submit = () => {
-  form.post(route('timesheets.upload'), {
-    onSuccess: (response) => {
-      console.log('Upload success:', response);
-      toast.add({
-        severity: 'success',
-        summary: 'File Uploaded',
-        detail: 'The file was uploaded successfully.',
-        life: 3000,
-      });
-      fetchTimeSheets();
-      form.reset('file');
-      setKey(prevKey => prevKey + 1);
-    },
-    onError: (errors) => {
-      console.log('Upload error:', errors);
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'There was an error uploading the file.',
-        life: 3000,
-      });
-    }
-  });
+    form.post(route("timesheets.upload"), {
+        onSuccess: (response) => {
+            console.log("Upload success:", response);
+            toast.add({
+                severity: "success",
+                summary: "File Uploaded",
+                detail: "The file was uploaded successfully.",
+                life: 3000,
+            });
+            fetchTimeSheets();
+            form.reset("file");
+            setKey((prevKey) => prevKey + 1);
+        },
+        onError: (errors) => {
+            console.log("Upload error:", errors);
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: "There was an error uploading the file.",
+                life: 3000,
+            });
+        },
+    });
 };
-
 
 onMounted(() => {
     fetchTimeSheets();
@@ -95,7 +94,7 @@ onUnmounted(() => {
 });
 
 defineOptions({
-    layout: MenubarLayout
+    layout: MenubarLayout,
 });
 </script>
 
@@ -114,25 +113,25 @@ defineOptions({
                             accept=".csv"
                             class="mb-2"
                         />
-                        <progress 
-                            v-if="form.progress" 
-                            :value="form.progress.percentage" 
+                        <progress
+                            v-if="form.progress"
+                            :value="form.progress.percentage"
                             max="100"
                             class="w-full"
                         >
                             {{ form.progress.percentage }}%
                         </progress>
                     </div>
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                         :disabled="!form.file || form.processing"
                     >
-                        {{ form.processing ? 'Uploading...' : 'Upload File' }}
+                        {{ form.processing ? "Uploading..." : "Upload File" }}
                     </button>
                 </form>
             </div>
-            <Divider /> 
+            <Divider />
 
             <!-- DataTable -->
             <div class="card">

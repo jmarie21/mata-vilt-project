@@ -1,10 +1,16 @@
 <script setup>
-import MenubarLayout from '../Layouts/MenubarLayout.vue';
-import Divider from 'primevue/divider';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import MenubarLayout from "../Layouts/MenubarLayout.vue";
+import Divider from "primevue/divider";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Button from "primevue/button";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+import { ref } from "vue";
+import { router } from "@inertiajs/vue3";
 
-
+const toast = useToast();
+const isLoading = ref(false);
 
 defineProps({
     tasks: {
@@ -13,14 +19,49 @@ defineProps({
     },
 });
 
+const fetchTasks = () => {
+    isLoading.value = true;
 
-
+    router.post(
+        route("tasks.fetch"),
+        {},
+        {
+            onStart: () => {
+                toast.add({
+                    severity: "info",
+                    summary: "Fetching Tasks",
+                    detail: "Retrieving latest ClickUp tasks",
+                    life: 2000,
+                });
+            },
+            onSuccess: () => {
+                toast.add({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "Tasks fetched successfully",
+                    life: 3000,
+                });
+            },
+            onError: (error) => {
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Failed to fetch tasks",
+                    life: 3000,
+                });
+                console.error("Error fetching tasks: ", error);
+            },
+            onFinish: () => {
+                isLoading.value = false;
+            },
+        }
+    );
+};
 
 defineOptions({
-    layout: MenubarLayout
+    layout: MenubarLayout,
 });
 </script>
-
 
 <template>
     <Head :title="`${$page.component}`" />
@@ -28,30 +69,35 @@ defineOptions({
         <div class="h-auto w-5/6 flex flex-col mt-10">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-4xl">Clickup Tasks</h1>
-                
+                <Button
+                    @click="fetchTasks"
+                    label="Fetch Tasks"
+                    severity="success"
+                    :loading="isLoading"
+                />
             </div>
-            <Divider /> 
+            <Divider />
 
-            <!-- DataTable -->
-             
             <div v-if="tasks && tasks.length > 0" class="card">
-                <DataTable :value="tasks" tableStyle="min-width: 50rem">
-                    <!-- Task Name -->
+                <DataTable
+                    :value="tasks"
+                    tableStyle="min-width: 50rem"
+                    :paginator="true"
+                    :rows="10"
+                >
                     <Column field="name" header="Task Name"></Column>
-
-                    <!-- Description -->
                     <Column field="description" header="Description"></Column>
-
-                    <!-- Status -->
-                    <Column field="status.status" header="Status"></Column>
-
-                    <!-- Due Date -->
-                    <Column field="creator.username" header="Created by"></Column>
+                    <Column field="status" header="Status"></Column>
+                    <Column field="creator" header="Created by"></Column>
                 </DataTable>
             </div>
-            <div v-else>
-                <p>No tasks found.</p>
+            <div v-else class="text-center p-4 bg-gray-100 rounded">
+                <p class="text-gray-600">
+                    No tasks found. Click "Fetch Tasks" to retrieve tasks.
+                </p>
             </div>
         </div>
+
+        <Toast />
     </div>
 </template>

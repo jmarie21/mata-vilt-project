@@ -55,6 +55,7 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
 
     // Clickup tasks routes
     Route::get('/tasks', [ClickupTaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks/fetch-tasks', [ClickupTaskController::class, 'fetchTasksDirectly'])->name('tasks.fetch');
     
 });
 
