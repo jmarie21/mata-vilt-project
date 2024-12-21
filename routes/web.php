@@ -9,6 +9,8 @@ use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SignupController;
+use App\Http\Controllers\TaskFetchConfigController;
+use App\Http\Controllers\TaskSchedulerController;
 use App\Http\Controllers\TimeSheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminCheck;
@@ -56,7 +58,11 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
     // Clickup tasks routes
     Route::get('/tasks', [ClickupTaskController::class, 'index'])->name('tasks.index');
     Route::post('/tasks/fetch-tasks', [ClickupTaskController::class, 'fetchTasksDirectly'])->name('tasks.fetch');
+
+    Route::get('/config', [TaskSchedulerController::class, 'show'])->name('config.show');
+    Route::post('/config', [TaskSchedulerController::class, 'update'])->name('config.update');
     
+
 });
 
 Route::middleware(['auth'])->group(function() {

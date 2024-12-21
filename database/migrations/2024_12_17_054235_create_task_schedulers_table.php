@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('password_resets', function (Blueprint $table) {
-            $table->string('email')->index();
-            $table->string('token'); 
-            $table->timestamp('created_at')->nullable();
+        Schema::create('task_schedulers', function (Blueprint $table) {
+            $table->id();
+            $table->string('interval')->default('everyMinute'); // Store the interval (everyMinute, everyFiveMinutes, hourly, daily)
+            $table->timestamps();
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists('task_schedulers');
     }
 };

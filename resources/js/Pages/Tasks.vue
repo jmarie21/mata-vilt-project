@@ -6,7 +6,7 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { router } from "@inertiajs/vue3";
 
 const toast = useToast();
@@ -19,6 +19,7 @@ defineProps({
     },
 });
 
+// Existing fetchTasks function
 const fetchTasks = () => {
     isLoading.value = true;
 
@@ -57,6 +58,23 @@ const fetchTasks = () => {
         }
     );
 };
+
+// // Polling function
+// let pollingInterval;
+// const startPolling = () => {
+//     pollingInterval = setInterval(() => {
+//         fetchTasks(); // Call the existing fetchTasks function to get the updated tasks
+//     }, 60000); // Fetch tasks every 60 seconds (60000ms)
+// };
+
+// // Stop polling when component is unmounted
+// onMounted(() => {
+//     startPolling(); // Start polling when the component is mounted
+// });
+
+// onBeforeUnmount(() => {
+//     clearInterval(pollingInterval); // Stop polling when the component is unmounted
+// });
 
 defineOptions({
     layout: MenubarLayout,
