@@ -25,7 +25,7 @@ class ClickupTaskController extends Controller
     }
 
     public function fetchTasksDirectly() {
-        $listId = '901605068772';
+        $listId = '901605369543';
         FetchClickupTasks::dispatch($listId);
         Log::info('Clickup tasks fetch job dispatched directly successfully');
         return back()->with('success', 'Clickup tasks fetch job dispatched successfully');

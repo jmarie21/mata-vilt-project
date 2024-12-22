@@ -29,11 +29,12 @@ class FetchClickupTasks implements ShouldQueue
     public function handle(ClickUpService $clickUpService)
     {
         try {
+            Log::info('Fetching tasks from ClickUp', ['list_id' => $this->listId]);
             $tasks = $clickUpService->getTasks($this->listId);
-
+    
             foreach ($tasks['tasks'] as $task) {
                 ClickUpTask::updateOrCreate(
-                    ['task_id' => $task['id']], 
+                    ['task_id' => $task['id']],
                     [
                         'name' => $task['name'],
                         'description' => $task['description'] ?? '',
@@ -42,7 +43,7 @@ class FetchClickupTasks implements ShouldQueue
                     ]
                 );
             }
-
+    
             Log::info('Fetched and stored ClickUp tasks successfully');
         } catch (\Exception $e) {
             Log::error('Failed to fetch ClickUp tasks', ['error' => $e->getMessage()]);

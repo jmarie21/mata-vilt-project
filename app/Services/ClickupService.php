@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ClickUpService
 {
@@ -17,20 +18,29 @@ class ClickUpService
 
     public function getTasks($listId)
     {
-        $response = Http::withHeaders([
+        $headers = [
             'Authorization' => $this->apiToken,
-        ])->get("{$this->baseUrl}/list/{$listId}/task", [
+        ];
+    
+        Log::info('ClickUp Request Headers', $headers);
+    
+        $response = Http::withHeaders($headers)->get("{$this->baseUrl}/list/{$listId}/task", [
             'include_closed' => true,
             'subtasks' => true,
             'page' => 0,
             'order_by' => 'due_date',
             'reverse' => false,
         ]);
-
+    
         if ($response->successful()) {
             return $response->json(); 
         }
-
+    
+        Log::error('ClickUp API request failed', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+    
         throw new \Exception('Failed to fetch tasks: ' . $response->body());
     }
 }
