@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\TasksFetched;
 use App\Models\ClickUpTask;
 use App\Services\ClickUpService;
 use Illuminate\Bus\Queueable;
@@ -43,6 +44,12 @@ class FetchClickupTasks implements ShouldQueue
                     ]
                 );
             }
+
+            // Fetch the latest tasks from the database after the update
+            $updatedTasks = ClickUpTask::all();
+
+            // Broadcast the updated tasks to the frontend
+            broadcast(new TasksFetched($updatedTasks));
     
             Log::info('Fetched and stored ClickUp tasks successfully');
         } catch (\Exception $e) {

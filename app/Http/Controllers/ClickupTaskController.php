@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TasksFetched;
 use App\Services\ClickUpService;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -27,6 +28,8 @@ class ClickupTaskController extends Controller
     public function fetchTasksDirectly() {
         $listId = '901605369543';
         FetchClickupTasks::dispatch($listId);
+
+       
         Log::info('Clickup tasks fetch job dispatched directly successfully');
         return back()->with('success', 'Clickup tasks fetch job dispatched successfully');
     }

@@ -11,12 +11,18 @@ import { router } from "@inertiajs/vue3";
 
 const toast = useToast();
 const isLoading = ref(false);
+const tasks = ref([]);
 
-defineProps({
+const props = defineProps({
     tasks: {
         type: Array,
         default: () => [],
     },
+});
+
+onMounted(() => {
+    tasks.value = [...props.tasks]; // Initialize tasks with the prop value
+    setupRealTimeUpdates();
 });
 
 // Existing fetchTasks function
@@ -59,22 +65,27 @@ const fetchTasks = () => {
     );
 };
 
-// // Polling function
-// let pollingInterval;
-// const startPolling = () => {
-//     pollingInterval = setInterval(() => {
-//         fetchTasks(); // Call the existing fetchTasks function to get the updated tasks
-//     }, 60000); // Fetch tasks every 60 seconds (60000ms)
-// };
+// Listen for real-time task updates
+const setupRealTimeUpdates = () => {
+    Echo.private("tasks") // This should match the private channel in your event class
+        .listen("TasksFetched", (event) => {
+            console.log("Real-time event received:", event);
+            toast.add({
+                severity: "info",
+                summary: "Real-Time Update",
+                detail: "Tasks updated in real-time!",
+                life: 3000,
+            });
 
-// // Stop polling when component is unmounted
-// onMounted(() => {
-//     startPolling(); // Start polling when the component is mounted
-// });
+            console.log("Tasks fetched via broadcast: ", event.tasks);
+            tasks.value = event.tasks; // Update the tasks dynamically
+        });
+};
 
-// onBeforeUnmount(() => {
-//     clearInterval(pollingInterval); // Stop polling when the component is unmounted
-// });
+// Cleanup when the component is destroyed
+onBeforeUnmount(() => {
+    Echo.leave("tasks");
+});
 
 defineOptions({
     layout: MenubarLayout,
