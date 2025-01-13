@@ -32,14 +32,35 @@ class FetchClickupTasks implements ShouldQueue
         try {
             Log::info('Fetching tasks from ClickUp', ['list_id' => $this->listId]);
             $tasks = $clickUpService->getTasks($this->listId);
+
+            Log::info('ClickUp API response', ['response' => $tasks]);
     
             foreach ($tasks['tasks'] as $task) {
+
+               // Log assignees to verify
+                Log::info('Assignees for task', [
+                    'task_id' => $task['id'],
+                    'assignees' => $task['assignees'] ?? 'No assignees found'
+                ]);
+
+                // Safely process assignees
+                $assignees = isset($task['assignees']) && is_array($task['assignees'])
+                    ? implode(', ', array_map(fn($assignee) => $assignee['username'] ?? 'Unknown', $task['assignees']))
+                    : 'No assignees';
+
+                // Process and convert the time spent (milliseconds to minutes or hours)
+                $timeSpent = $task['time_spent'] ?? 0; // Default to 0 if not provided
+                $formattedTimeSpent = $this->formatTimeSpent($timeSpent);
+
+               
                 ClickUpTask::updateOrCreate(
                     ['task_id' => $task['id']],
                     [
                         'name' => $task['name'],
                         'description' => $task['description'] ?? '',
-                        'status' => $task['status']['status'],
+                        'assignees' => $assignees,
+                        'time_spent' => $formattedTimeSpent, // Save the formatted time
+                        'status' => $task['status']['status'],  
                         'creator' => $task['creator']['username'] ?? '',
                     ]
                 );
@@ -56,4 +77,27 @@ class FetchClickupTasks implements ShouldQueue
             Log::error('Failed to fetch ClickUp tasks', ['error' => $e->getMessage()]);
         }
     }
+
+    private function formatTimeSpent($milliseconds)
+    {
+        // Convert to seconds
+        $seconds = $milliseconds / 1000;
+    
+        // Calculate hours and minutes
+        $hours = floor($seconds / 3600); // Calculate full hours
+        $minutes = floor(($seconds % 3600) / 60); // Calculate remaining minutes
+    
+        Log::info('Formatting Time', ['milliseconds' => $milliseconds, 'seconds' => $seconds, 'hours' => $hours, 'minutes' => $minutes]);
+    
+        // If hours are present, format accordingly
+        if ($hours > 0) {
+            return $hours . ' hour' . ($hours > 1 ? 's' : '') . ($minutes > 0 ? ' and ' . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '');
+        }
+    
+        // If no hours, just show minutes
+        return $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+    }
+    
+
+
 }

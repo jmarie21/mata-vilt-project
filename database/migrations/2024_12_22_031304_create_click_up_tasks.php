@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('task_id')->unique(); // Add this column to store the unique task ID
             $table->string('name');
             $table->text('description')->nullable(); // Make description nullable
+            $table->text('assignees')->nullable(); // Make description nullable
+            $table->string('time_spent')->nullable();
             $table->string('status');
             $table->string('creator')->nullable(); // Make creator nullable
             $table->timestamps();

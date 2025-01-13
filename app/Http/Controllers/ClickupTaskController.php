@@ -18,6 +18,7 @@ class ClickupTaskController extends Controller
     }
 
     public function index() {
+       
         $tasks = ClickUpTask::all();
 
         return Inertia::render('Tasks', [

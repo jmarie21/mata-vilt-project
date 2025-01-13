@@ -29,6 +29,8 @@ class TasksFetched implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
+
+    // Specifies which channels the event will broadcast on
     public function broadcastOn(): array
     {
         return [
@@ -36,6 +38,7 @@ class TasksFetched implements ShouldBroadcast
         ];
     }
 
+    // Specifies what data should be sent to the frontend when the event is broadcast
     public function broadcastWith()
     {   
     return ['tasks' => $this->tasks]; // Pass tasks to the frontend
