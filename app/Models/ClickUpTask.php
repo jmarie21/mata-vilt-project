@@ -19,4 +19,11 @@ class ClickUpTask extends Model
         'status',
         'creator',
     ];
+
+    public static function getTotalTimeSpentByAssignee($assignee)
+    {
+        return self::where('assignees', 'LIKE', '%' . $assignee . '%')
+            ->sum('time_spent');
+    }
+
 }

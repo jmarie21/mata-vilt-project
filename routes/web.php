@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TaskFetchConfigController;
@@ -19,9 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', AdminCheck::class])->group(function() {
     // Admin Exclusive Routes
-    Route::get('/reports', function() {
-        return inertia('Reports');  
-    })->name('reports');
+    // Route::get('/reports', function() {
+    //     return inertia('Reports');  
+    // })->name('reports');
     Route::get('/invoice', function() {
         return inertia('Invoice');
     })->name('invoice');
@@ -61,6 +62,9 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
 
     Route::get('/config', [TaskSchedulerController::class, 'show'])->name('config.show');
     Route::post('/config', [TaskSchedulerController::class, 'update'])->name('config.update');
+
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
     
 
 });
