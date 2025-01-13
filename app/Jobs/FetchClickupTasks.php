@@ -52,6 +52,8 @@ class FetchClickupTasks implements ShouldQueue
                 $timeSpent = $task['time_spent'] ?? 0; // Default to 0 if not provided
                 $formattedTimeSpent = $this->formatTimeSpent($timeSpent);
 
+                Log::info('Formatted Time:', ['formatted_time' => $formattedTimeSpent]);
+
                
                 ClickUpTask::updateOrCreate(
                     ['task_id' => $task['id']],
@@ -59,7 +61,8 @@ class FetchClickupTasks implements ShouldQueue
                         'name' => $task['name'],
                         'description' => $task['description'] ?? '',
                         'assignees' => $assignees,
-                        'time_spent' => $formattedTimeSpent, // Save the formatted time
+                        'time_spent' => $timeSpent, // Save the formatted time
+                        'formatted_time_spent' => $formattedTimeSpent, // Save the formatted time spent
                         'status' => $task['status']['status'],  
                         'creator' => $task['creator']['username'] ?? '',
                     ]
@@ -67,7 +70,10 @@ class FetchClickupTasks implements ShouldQueue
             }
 
             // Fetch the latest tasks from the database after the update
-            $updatedTasks = ClickUpTask::all();
+            $updatedTasks = ClickUpTask::all()->map(function ($task) {
+                $task->formatted_time_spent = $this->formatTimeSpent($task->time_spent);
+                return $task;
+            });
 
             // Broadcast the updated tasks to the frontend
             broadcast(new TasksFetched($updatedTasks));
@@ -77,6 +83,8 @@ class FetchClickupTasks implements ShouldQueue
             Log::error('Failed to fetch ClickUp tasks', ['error' => $e->getMessage()]);
         }
     }
+
+    
 
     private function formatTimeSpent($milliseconds)
     {

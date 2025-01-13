@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable(); // Make description nullable
             $table->text('assignees')->nullable(); // Make description nullable
-            $table->string('time_spent')->nullable();
+            $table->bigInteger('time_spent')->default(0);
             $table->string('status');
             $table->string('creator')->nullable(); // Make creator nullable
             $table->timestamps();

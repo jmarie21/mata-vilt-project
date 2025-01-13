@@ -116,7 +116,10 @@ defineOptions({
                     <Column field="name" header="Task Name"></Column>
                     <Column field="description" header="Description"></Column>
                     <Column field="assignees" header="Assignees"></Column>
-                    <Column field="time_spent" header="Time Spent"></Column>
+                    <Column
+                        field="formatted_time_spent"
+                        header="Time Spent"
+                    ></Column>
                     <Column field="status" header="Status"></Column>
                     <Column field="creator" header="Created by"></Column>
                 </DataTable>

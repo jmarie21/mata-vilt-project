@@ -15,6 +15,7 @@ class ClickUpTask extends Model
         'description',
         'assignees',
         'time_spent',
+        'formatted_time_spent',
         'status',
         'creator',
     ];
