@@ -153,6 +153,19 @@ const props = defineProps({
                                         Configuration
                                     </Link>
                                 </li>
+                                <li
+                                    class="mb-2 py-2 px-4 hover:bg-gray-200 cursor-pointer"
+                                >
+                                    <Link
+                                        :href="route('codes.index')"
+                                        @click="drawerMenu = false"
+                                        class="flex items-center gap-2"
+                                    >
+                                        <i class="pi pi-briefcase"></i>
+                                        Codes
+                                    </Link>
+                                </li>
+                                
                             </ul>
                         </div>
                         <div v-else>

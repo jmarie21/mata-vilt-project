@@ -1,5 +1,16 @@
 import axios from "axios";
+import Echo from "laravel-echo";
+
 window.axios = axios;
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY, // Use Vite environment variables
+    wsHost: window.location.hostname,
+    wsPort: 8080,
+    forceTLS: false,
+    disableStats: true,
+});
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 

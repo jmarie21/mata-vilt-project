@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClickupTaskController;
+use App\Http\Controllers\CodesController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoginController;
@@ -65,6 +66,10 @@ Route::middleware(['auth', AdminCheck::class])->group(function() {
 
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+
+    //Codes
+    Route::get('/codes', [CodesController::class, 'index'])->name('codes.index');
+    Route::post('/codes', [CodesController::class, 'generateCode'])->name('codes.generate');
     
 
 });
