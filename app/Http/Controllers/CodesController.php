@@ -13,13 +13,18 @@ class CodesController extends Controller
      */
     public function index()
     {
-        $codes = Code::all();
+        $codes = Code::select('code', 'created_at')->orderBy('created_at', 'desc')->get()->map(function ($code) {
+            $code->created_at_formatted = $code->created_at->format('Y-m-d');
+            return $code;
+        });
+
         return Inertia::render('Codes', [
             'codes' => $codes,
         ]);
     }
 
-    public function generateCode() {
+    public function generateCode()
+    {
         $code = $this->generateUniqueCode();
 
         // Save the code to the database
@@ -27,7 +32,19 @@ class CodesController extends Controller
             'code' => $code,
         ]);
 
-        return redirect()->route('codes.index');
+        // Fetch the updated list of codes
+        $codes = Code::select('code', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($code) {
+                $code->created_at_formatted = $code->created_at->format('Y-m-d');
+                return $code;
+        });
+
+        // Return the updated data to the frontend
+        return Inertia::render('Codes', [
+            'codes' => $codes,
+        ]);
     }
 
     public function generateUniqueCode() {
